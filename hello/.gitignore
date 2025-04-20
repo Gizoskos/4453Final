@@ -26,4 +26,18 @@ dist/
 build/
 
 *.azure
-
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+__pycache__/
+*.pyc
+.venv/
+env/
+ENV/
+*.log
+.DS_Store
