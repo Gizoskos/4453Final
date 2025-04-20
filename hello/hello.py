@@ -3,9 +3,12 @@ import psycopg2
 import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
+from dotenv import load_dotenv
+
+load_dotenv()
 app = Flask(__name__)
 
-KEY_VAULT_NAME = os.getenv("vault4453")
+KEY_VAULT_NAME = os.getenv("KEY_VAULT_NAME")
 VAULT_URL = f"https://{KEY_VAULT_NAME}.vault.azure.net"
 
 credential = DefaultAzureCredential()
@@ -22,12 +25,12 @@ def hello():
         connection = psycopg2.connect(
             host = db_host,
             dbname = db_name,
-            user = db_name,
+            user = db_user,
             password = db_password
         )
         cursor = connection.cursor()
         cursor.execute("SELECT version();")
-        result = cursor.fetchone
+        result = cursor.fetchone()
         connection.close()
         return f"Connected to PostgreSQL!"
     except Exception as ex:
