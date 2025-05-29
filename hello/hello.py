@@ -34,7 +34,7 @@ def hello():
         connection.close()
         return f"Connected to PostgreSQL!"
     except Exception as ex:
-        return f"Db connection failed!"
+        return f"Db connection failed!!"
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
