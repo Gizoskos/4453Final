@@ -12,7 +12,7 @@ COPY hello/requirements.txt /app/requirements.txt
 
 # SSH
 RUN apt-get update && \
-    apt-get install -y openssh-server --no-install-recommends && \
+    apt-get install -y openssh-server dos2unix --no-install-recommends && \
     mkdir -p /var/run/sshd && \
     echo "$SSH_PASSWD" | chpasswd && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
