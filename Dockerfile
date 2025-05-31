@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY ./hello /app/hello
 COPY hello/requirements.txt requirements.txt
-COPY hello/.env .env
+#COPY hello/.env .env we have no .env in our github repo
 
 # SSH
 RUN apt-get update && \
