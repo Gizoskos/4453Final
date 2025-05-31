@@ -1,0 +1,46 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_WEBAPP_NAME: webApp4453
+  RESOURCE_GROUP: 4453Final
+  IMAGE_NAME: webapp4453
+  REGISTRY_NAME: acr4453final
+  REGISTRY_LOGIN_SERVER: acr4453final.azurecr.io
+  DOCKER_TAG: latest
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in to ACR
+        run: |
+          echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ env.REGISTRY_LOGIN_SERVER }} \
+            --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }} .
+
+      - name: Push Docker image to ACR
+        run: |
+          docker push ${{ env.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          images: ${{ env.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}
