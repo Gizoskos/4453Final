@@ -9,7 +9,6 @@ COPY ./hello /app/hello
 COPY hello/requirements.txt /app/requirements.txt
 #COPY hello/.env .env we have no .env in our github repo
 
-COPY sshd_config /etc/ssh/sshd_config
 
 # SSH
 RUN apt-get update && \
