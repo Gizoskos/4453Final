@@ -13,7 +13,7 @@ VAULT_URL = f"https://{KEY_VAULT_NAME}.vault.azure.net"
 client_id = os.getenv("MANAGED_IDENTITY_CLIENT_ID")
 
 
-credential = DefaultAzureCredential(client_id)
+credential = DefaultAzureCredential(managed_identity_client_id=client_id)
 client = SecretClient(vault_url=VAULT_URL, credential=credential)
 
 db_user = client.get_secret("DbUsername").value
