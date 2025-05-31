@@ -25,7 +25,7 @@ RUN mkdir /root/.ssh
 
 # init cmd
 COPY init.sh /usr/local/bin/init.sh
-RUN chmod 755 /usr/local/bin/init.sh
+RUN dos2unix /usr/local/bin/init.sh && chmod +x /usr/local/bin/init.sh
 
 # 8000 Flask, 2222 SSH
 ENV PORT 8000
