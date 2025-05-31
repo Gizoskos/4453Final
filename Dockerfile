@@ -12,7 +12,7 @@ COPY hello/requirements.txt /app/requirements.txt
 
 # SSH
 RUN apt-get update && \
-    apt-get install -y openssh-server dos2unix --no-install-recommends && \
+    apt-get install -y openssh-server --no-install-recommends && \
     mkdir -p /var/run/sshd && \
     echo "$SSH_PASSWD" | chpasswd && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -23,14 +23,10 @@ RUN pip install --upgrade pip && \
 # SSH yapılandırması
 RUN mkdir /root/.ssh
 
-# init cmd
-COPY init.sh /usr/local/bin/init.sh
-RUN dos2unix /usr/local/bin/init.sh && chmod +x /usr/local/bin/init.sh
-
 # 8000 Flask, 2222 SSH
 ENV PORT 8000
 ENV SSH_PORT 2222
 EXPOSE 8000 2222
 
-
-CMD ["/usr/local/bin/init.sh"]
+# Run SSHD in background, then start gunicorn
+CMD bash -c "/usr/sbin/sshd && exec gunicorn --bind 0.0.0.0:8000 hello.hello:app"
