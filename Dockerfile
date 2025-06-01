@@ -9,7 +9,6 @@ COPY ./hello /app/hello
 COPY hello/requirements.txt /app/requirements.txt
 #COPY hello/.env .env we have no .env in our github repo
 
-
 # SSH
 RUN apt-get update && \
     apt-get install -y openssh-server --no-install-recommends && \
@@ -24,8 +23,7 @@ RUN pip install --upgrade pip && \
 RUN mkdir /root/.ssh
 
 # 8000 Flask, 2222 SSH
-ENV PORT 8000
-ENV SSH_PORT 2222
+
 EXPOSE 8000 2222
 
 # Run SSHD in background, then start gunicorn
