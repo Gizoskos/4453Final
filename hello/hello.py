@@ -8,31 +8,36 @@ from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
 
+KEY_VAULT_NAME = os.getenv("KEY_VAULT_NAME")
+VAULT_URL = f"https://{KEY_VAULT_NAME}.vault.azure.net"
+
+
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=VAULT_URL, credential=credential)
+
+db_user = client.get_secret("DbUsername").value
+db_password = client.get_secret("DbPassword").value
+db_name = os.getenv("DB_NAME")
+db_host = os.getenv("DB_HOST")
+
+@app.route("/")
+def index():
+    return "App is running!"
+
 @app.route("/hello")
 def hello():
     try:
-        KEY_VAULT_NAME = os.getenv("KEY_VAULT_NAME")
-        VAULT_URL = f"https://{KEY_VAULT_NAME}.vault.azure.net"
-        client_id = os.getenv("MANAGED_IDENTITY_CLIENT_ID")
-
-
-        credential = DefaultAzureCredential(managed_identity_client_id=client_id)
-        client = SecretClient(vault_url=VAULT_URL, credential=credential)
-
-        db_user = client.get_secret("DbUsername").value
-        db_password = client.get_secret("DbPassword").value
-        db_name = os.getenv("DB_NAME")
-        db_host = os.getenv("DB_HOST")
-
         connection = psycopg2.connect(
             host = db_host,
             dbname = db_name,
             user = db_user,
-            password = db_password
+            password = db_password,
+            sslmode='require'
         )
         cursor = connection.cursor()
         cursor.execute("SELECT version();")
         result = cursor.fetchone()
+        #cursor.close()
         connection.close()
 
         return f"Connected to PostgreSQL!"
