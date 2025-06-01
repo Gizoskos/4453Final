@@ -8,22 +8,22 @@ from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
 
-KEY_VAULT_NAME = os.getenv("KEY_VAULT_NAME")
-VAULT_URL = f"https://{KEY_VAULT_NAME}.vault.azure.net"
-client_id = os.getenv("MANAGED_IDENTITY_CLIENT_ID")
-
-
-credential = DefaultAzureCredential(managed_identity_client_id=client_id)
-client = SecretClient(vault_url=VAULT_URL, credential=credential)
-
-db_user = client.get_secret("DbUsername").value
-db_password = client.get_secret("DbPassword").value
-db_name = os.getenv("DB_NAME")
-db_host = os.getenv("DB_HOST")
-
 @app.route("/hello")
 def hello():
     try:
+        KEY_VAULT_NAME = os.getenv("KEY_VAULT_NAME")
+        VAULT_URL = f"https://{KEY_VAULT_NAME}.vault.azure.net"
+        client_id = os.getenv("MANAGED_IDENTITY_CLIENT_ID")
+
+
+        credential = DefaultAzureCredential(managed_identity_client_id=client_id)
+        client = SecretClient(vault_url=VAULT_URL, credential=credential)
+
+        db_user = client.get_secret("DbUsername").value
+        db_password = client.get_secret("DbPassword").value
+        db_name = os.getenv("DB_NAME")
+        db_host = os.getenv("DB_HOST")
+
         connection = psycopg2.connect(
             host = db_host,
             dbname = db_name,
@@ -34,9 +34,10 @@ def hello():
         cursor.execute("SELECT version();")
         result = cursor.fetchone()
         connection.close()
+
         return f"Connected to PostgreSQL!"
     except Exception as ex:
-        return f"Db connection failed!!"
+        return f"Db connection failed!: {str(ex)}"
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)

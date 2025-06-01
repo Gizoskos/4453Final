@@ -29,4 +29,4 @@ ENV SSH_PORT 2222
 EXPOSE 8000 2222
 
 # Run SSHD in background, then start gunicorn
-CMD bash -c "/usr/sbin/sshd && exec gunicorn --bind 0.0.0.0:8000 hello.hello:app"
+CMD bash -c "/usr/sbin/sshd && exec gunicorn --timeout 120 --bind 0.0.0.0:8000 hello.hello:app"
