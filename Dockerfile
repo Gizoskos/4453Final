@@ -7,6 +7,7 @@ WORKDIR /app
 
 COPY ./hello /app/hello
 COPY hello/requirements.txt /app/requirements.txt
+COPY sshd_config /etc/ssh/sshd_config
 #COPY hello/.env .env we have no .env in our github repo
 
 # SSH
