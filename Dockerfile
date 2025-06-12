@@ -22,9 +22,13 @@ RUN pip install --upgrade pip && \
 # SSH yapılandırması
 RUN mkdir /root/.ssh
 
+# init cmd
+COPY init.sh /usr/local/bin/init.sh
+RUN chmod 755 /usr/local/bin/init.sh
+
 # 8000 Flask, 2222 SSH
 
 EXPOSE 8000 2222
 
 # Run SSHD in background, then start gunicorn
-CMD bash -c "/usr/sbin/sshd && exec gunicorn --timeout 120 --bind 0.0.0.0:8000 hello.hello:app"
+CMD ["/usr/local/bin/init.sh"]
