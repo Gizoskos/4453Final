@@ -1,7 +1,7 @@
 from flask import Flask
 import psycopg2
 import os
-from azure.identity import DefaultAzureCredential
+from azure.identity import ManagedIdentityCredential
 from azure.keyvault.secrets import SecretClient
 from dotenv import load_dotenv
 
@@ -9,10 +9,11 @@ load_dotenv()
 app = Flask(__name__)
 
 KEY_VAULT_NAME = os.getenv("KEY_VAULT_NAME")
+UAMI_CLIENT_ID = os.getenv("UAMI_CLIENT_ID")
 VAULT_URL = f"https://{KEY_VAULT_NAME}.vault.azure.net"
 
 
-credential = DefaultAzureCredential()
+credential = ManagedIdentityCredential(client_id=UAMI_CLIENT_ID)
 client = SecretClient(vault_url=VAULT_URL, credential=credential)
 
 db_user = client.get_secret("DbUsername").value
